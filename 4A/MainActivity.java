@@ -1,4 +1,8 @@
-package com.example.myapplication;
+package com.example.foura;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -8,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import static com.example.foura.R.layout.content_main;
+
 public class MainActivity extends AppCompatActivity {
 
     Button btn;
@@ -15,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
+        setContentView(content_main);
         btn = (Button) findViewById(R.id.submitbtn);
 
         btn.setOnClickListener(new View.OnClickListener() {
