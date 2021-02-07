@@ -1,12 +1,11 @@
-package com.example.myapplication;
+package com.example.secondprogram;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.*;
 import android.view.*;
-
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    String[] state = { "Andhra Pradesh", "Goa","Karnataka","Kerala", "Maharastra", "Telangana", "TamilNadu"};
+    String[] state = { "Telangana", "Goa","Karnataka","Kerala", "Maharastra", "Andhra Pradesh", "TamilNadu"};
     EditText uname;
     EditText pass;
     EditText address;
