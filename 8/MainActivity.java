@@ -1,86 +1,85 @@
-package com.example.myapplication;
+package com.example.a8;
 
 import androidx.appcompat.app.AppCompatActivity;
-import java.io.*;
-import android.app.Activity;
+import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
-public class MainActivity extends AppCompatActivity  {
-    Button b1,b2;
-    EditText ed1;
-    EditText pwd;
-    String uname_;
-    String pwd_;
-    private String file = "C:\\Users\\Dell\\Desktop\\android lab\\filesLab.txt";
-    String data;
+import static android.widget.Toast.LENGTH_SHORT;
+import static android.widget.Toast.makeText;
+
+public class MainActivity extends AppCompatActivity {
+    DatabaseHelper databaseHelper;
+    EditText et_username, et_password;
+    Button btn_register, btn_login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
-
-        b1=(Button)findViewById(R.id.save);
-        b2=(Button)findViewById(R.id.login);
-
-        ed1=(EditText)findViewById(R.id.uname);
-        pwd=(EditText)findViewById(R.id.password);
-        b1.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_main);
+        databaseHelper = new DatabaseHelper(this);
+        et_username = (EditText)findViewById(R.id.lusername);
+        et_password = (EditText)findViewById(R.id.lpassword);
+        btn_register = (Button)findViewById(R.id.lregister);
+        btn_login = (Button)findViewById(R.id.llogin);
+        btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    FileOutputStream fOut=openFileOutput(file, MODE_PRIVATE);
-                    data = "user1 123\nuser2 345\nuser3 456\n171216 216\n";
-                    fOut.write(data.getBytes());
+                try
+                {
+                    String Username = et_username.getText().toString();
+                    String Password = et_password.getText().toString();
+                    boolean user = databaseHelper.CheckUsernamePassword(Username,Password);
+                    if (user)
+                    {
 
-                    fOut.close();
-                    Toast.makeText(getBaseContext(), "File saved successfully!",
-                            Toast.LENGTH_SHORT).show();
+                        makeText(getApplicationContext(), "Login Successful", LENGTH_SHORT).show();
+                        /*Intent intent = new Intent(DataBaseActivity.this, MainActivity.class);
+                        startActivity(intent);*/
 
-                }catch (Exception e) {
-                    e.printStackTrace();
+                    }
+                    else
+                    {
+                        makeText(getApplicationContext(), "Login Unsuccessful! Please verify your Username and Password", LENGTH_SHORT).show();
+                    }
                 }
+                catch (SQLiteException ex)
+                {
+                    makeText(getApplicationContext(), ""+ex, LENGTH_SHORT).show();
+                }
+
             }
         });
-
-        b2.setOnClickListener(new View.OnClickListener() {
-
+        btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Input to load");
-                uname_ = ed1.getText().toString();
-                pwd_ = pwd.getText().toString();
-                try {
-                    System.out.println("Before File open");
-                    FileInputStream fin = openFileInput(file);
-                    System.out.println("After File open");
-                    int c;
-                    String temp="";
-                    while((c = fin.read()) != -1){
-                        temp = temp + Character.toString((char)c);
-                    }
-                    String file_read[] = temp.split("\n");
-                    boolean isFound = false;
-                    for(String record : file_read) {
-                        String uname_pwd[] = record.split(" ");
-                        if(uname_pwd[0].equalsIgnoreCase(uname_) && uname_pwd[1].equals(pwd_)) {
-                            isFound = true;
-                            break;
-                        }
-                    }
+                String username = et_username.getText().toString();
+                String password = et_password.getText().toString();
 
-                    if(isFound) {
-                        Toast.makeText(getBaseContext(),"Login Successful"  ,Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getBaseContext(),"Login Success"  ,Toast.LENGTH_SHORT).show();
+                if(username.equals("") || password.equals("")){
+                    makeText(getApplicationContext(), "Fields Required", LENGTH_SHORT).show();
+                }else{
+
+                    if(password.equals(password)){
+                        Boolean checkusername = databaseHelper.CheckUsername(username);
+                        if (!checkusername)
+                            makeText(getApplicationContext(), "Username already taken", LENGTH_SHORT).show();
+                        else {
+                            boolean insert;
+                            if (databaseHelper.Insert(username, password)) insert = true;
+                            else insert = false;
+                            if(insert){
+                                makeText(getApplicationContext(), "Registered", LENGTH_SHORT).show();
+                                et_username.setText("");
+                                et_password.setText("");
+                            }
+                        }
+                    }else{
+                        makeText(getApplicationContext(), "Password does not match", LENGTH_SHORT).show();
                     }
-                }
-                catch(Exception e){
                 }
             }
         });
